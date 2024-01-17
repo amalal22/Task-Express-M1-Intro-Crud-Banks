@@ -27,23 +27,17 @@ app.delete("/accounts/:id", (req, res) => {
 });
 app.put("/accounts/:id", (req, res) => {
   const { id } = req.params;
-  //   const newAccount = {
-  //     //   id: accounts[accounts.length - 1].id + 1,
-  //     username: req.body.username,
-  //     funds: req.body.funds,
-  //   };
+  //   res.params.funds = re;
   const accountF = accounts.find((account) => {
     return account.id == id;
   });
   if (!accountF) {
     return res.status(404);
   }
-  accountF.username = req.params.username;
-  accountF.funds = req.params.funds;
-  accountUpdated = accounts.map((account) =>
-    account.id == id ? (account = accountF) : account
-  );
-  return res.json(accounts);
+  accountF.username = req.body.username;
+  accountF.funds = req.body.funds;
+
+  return res.json(accountF);
 });
 
 const PORT = 8000;
