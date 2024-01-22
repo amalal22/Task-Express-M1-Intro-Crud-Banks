@@ -1,19 +1,30 @@
 const express = require("express");
 const {
-  getAllAccounts,
+  getAccountsByID,
   createAccount,
   deleteAccountById,
   updateAccountById,
 } = require("./controllers");
+const Account = require("../../models/Account");
 
 const router = express.Router();
 
-router.get("/", getAllAccounts);
+router.param("_id", async (req, res, next, _id) => {
+  const account = await Account.findById(_id);
+  if (!account)
+    return res
+      .status(404)
+      .json({ message: "Student with this id is not found! " });
+  req.account = account;
+  next();
+});
+
+router.get("/:_id", getAccountsByID);
 
 router.post("/", createAccount);
 
-router.delete("/:id", deleteAccountById);
+router.delete("/:_id", deleteAccountById);
 
-router.put("/:id", updateAccountById);
+router.put("/:_id", updateAccountById);
 
 module.exports = router;

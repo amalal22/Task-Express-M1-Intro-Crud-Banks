@@ -1,8 +1,21 @@
-const getAllAccounts = (req, res) => {
-  return res.status(200).json(accounts);
+const accounts = require("../../accounts");
+const Account = require("../../models/Account");
+
+const getAccountsByID = async (req, res, next) => {
+  try {
+    return res.status(201).json(req.account);
+  } catch (error) {
+    next(error);
+  }
 };
 
-const createAccount = (req, res) => {
+const createAccount = async (req, res, next) => {
+  try {
+    const account = await Account.create(req.body);
+    return res.status(201).json(account);
+  } catch (error) {
+    next(error);
+  }
   const newAccount = {
     id: accounts[accounts.length - 1].id + 1,
     username: req.body.username,
@@ -12,33 +25,27 @@ const createAccount = (req, res) => {
   return res.json(accounts);
 };
 
-const deleteAccountById = (req, res) => {
-  const { id } = req.params;
-  const account = accounts.find((account) => account.id == id);
-  if (!account) {
-    return res.status(404);
+const deleteAccountById = async (req, res, next) => {
+  try {
+    await req.account.deleteOne();
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
   }
-  accountsUpdated = accounts.filter((account) => account.id != id);
-  return res.json(accountsUpdated);
 };
 
-const updateAccountById = (req, res) => {
-  const { id } = req.params;
-  //   res.params.funds = re;
-  const accountF = accounts.find((account) => {
-    return account.id == id;
-  });
-  if (!accountF) {
-    return res.status(404);
+const updateAccountById = async (req, res, next) => {
+  try {
+    await req.account.updateOne(req.body);
+    return res.status(204).end();
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
-  accountF.username = req.body.username;
-  accountF.funds = req.body.funds;
-
-  return res.json(accountF);
 };
 
 module.exports = {
-  getAllAccounts,
+  getAccountsByID,
   updateAccountById,
   deleteAccountById,
   createAccount,
